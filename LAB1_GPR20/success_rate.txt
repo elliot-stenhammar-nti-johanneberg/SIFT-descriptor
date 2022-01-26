@@ -1,0 +1,4 @@
+
+80% och digits correctly classified
+
+9 of 10 churches correctly classified
