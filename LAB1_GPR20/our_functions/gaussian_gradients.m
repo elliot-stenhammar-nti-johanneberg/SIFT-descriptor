@@ -8,6 +8,6 @@ function [grad_x,grad_y] = gaussian_gradients(img,std)
     h = gaussian_filter(img,std); %Filter img
    
     grad_x = imfilter(h,Ix,'symmetric'); %Creates grad_x 
-    grad_y = imfilter(h,Iy,'symmetric'); %Creates grad_x 
+    grad_y = imfilter(h,Iy,'symmetric'); %Creates grad_y 
 
 end
