@@ -7,6 +7,7 @@ from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
+# Reads dataset and converts data to array
 targets = []
 data = []
 dataset = 'Data/Datasets/digits-hog.csv'
@@ -24,6 +25,7 @@ with open(dataset, 'r') as file:
 clf = svm.SVC(kernel='linear')
 clf.fit(data, targets)
 
+# Takes an unprocessed (grayscaled) image and removes noise + enlarges contrast between black and white 
 def preProcessImage(img):
     blur = cv2.GaussianBlur(img, (0, 0), sigmaX=33, sigmaY=33)
     divide = cv2.divide(img, blur, scale=255)
@@ -31,14 +33,17 @@ def preProcessImage(img):
     invert = cv2.bitwise_not(thresh)
     return invert
 
+# Takes a processed image, splits it in 9 parts and creates a histogram of gradients for each. Returns array of histograms.
 def HoG(img):
     cropped_imgs = []
+    # Crops image into 9 parts
     for i in range(3):
         for j in range(3):
             cropped_img = img[i*9:(i+1)*9, j*9:(j+1)*9]
             cropped_imgs.append(cropped_img)
     
     histograms = []
+    # For each part create a HoG for that image
     for img in cropped_imgs:
         mag_array = []
         ang_array = []
@@ -59,13 +64,15 @@ def HoG(img):
         histograms.append(histogram)
     return np.array(histograms)
 
+# Takes an image, processes it, finds, crops and predicts numbers. Returns new image with labeled predictions
+# for all numbers in image. 
 def main():
         OriginalImg = cv2.imread("Test-imgs/test2.jpg", cv2.IMREAD_GRAYSCALE)
         ResizedImg = cv2.resize(OriginalImg, [750, 750])
         ProcessedImg = preProcessImage(ResizedImg)
 
-        cnts = cv2.findContours(ProcessedImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+        cnts = cv2.findContours(ProcessedImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # Built in function for finding potential targets
+        cnts = cnts[0] if len(cnts) == 2 else cnts[1] 
         for c in cnts:
             x, y, w, h = cv2.boundingRect(c)
             # num = cv2.resize(ProcessedImg[y:y+h, x:x+w], [28, 28]).flatten()

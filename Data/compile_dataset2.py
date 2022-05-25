@@ -1,3 +1,5 @@
+# Compile dataset of hog:s. Currently used in main.py.
+
 import cv2
 import numpy as np
 import math
@@ -7,6 +9,7 @@ import os
 
 np.set_printoptions(threshold=sys.maxsize)
 
+# Takes an unprocessed (grayscaled) image and removes noise + enlarges contrast between black and white 
 def preProcessImg(img):
     blur = cv2.GaussianBlur(img, (0,0), sigmaX=33, sigmaY=33)
     divide = cv2.divide(img, blur, scale=255)
@@ -14,13 +17,15 @@ def preProcessImg(img):
     resize = cv2.resize(img, [28, 28])
     return resize
 
+# Takes a processed image, splits it in 9 parts and creates a histogram of gradients for each. Returns array of histograms.
 def HoG(img):
     cropped_imgs = []
+    # Crops image into 9 parts
     for i in range(3):
         for j in range(3):
             cropped_img = img[i*9:(i+1)*9, j*9:(j+1)*9]
             cropped_imgs.append(cropped_img)
-    
+    # For each part create a HoG for that image
     histograms = []
     for img in cropped_imgs:
         mag_array = []
@@ -42,6 +47,7 @@ def HoG(img):
         histograms.append(histogram)
     return np.array(histograms)
 
+# Opens each image in folder of saved numbers and allows user to label them before saving data to .csv file as a dataset. 
 folder = 'Extracted-digits'
 all_ors = []
 for img in os.listdir(folder):

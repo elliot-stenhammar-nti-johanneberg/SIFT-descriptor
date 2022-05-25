@@ -5,6 +5,7 @@ import os
 
 np.set_printoptions(threshold=sys.maxsize)
         
+# Takes an unprocessed (grayscaled) image and removes noise + enlarges contrast between black and white 
 def preProcessImage(img):
     blur = cv2.GaussianBlur(img, (0, 0), sigmaX=33, sigmaY=33)
     divide = cv2.divide(img, blur, scale=255)
@@ -12,6 +13,8 @@ def preProcessImage(img):
     invert = cv2.bitwise_not(thresh)
     return invert
 
+# Takes an processed image and applies a built in function for finding potential targets. Rejects targets if size is unreasonably
+# small. 
 def findContours(img):
     global ROI_number
     cnts = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -25,7 +28,7 @@ def findContours(img):
             ROI_number += 1
             cv2.rectangle(ProcessedImg, (x, y), (x+w, y+h), (255, 255, 255), 2)
         
-
+# Writes found numbers to folder with individual names.
 def main():
     folder = "Original-images"
     global ROI_number

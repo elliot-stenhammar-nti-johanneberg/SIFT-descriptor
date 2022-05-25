@@ -1,3 +1,5 @@
+# Compile dataset of pixels. Not currently used in main.py 
+
 import cv2
 import numpy as np
 import sys
